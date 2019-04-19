@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Page Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link href='/css/datetimepicker.min.css' rel='stylesheet' type="text/css"/>
+  <style>
+    .loginForm, .lazyForm {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-left: -170px;
+      margin-top: -220px;
+      width: 340px;
+      padding: 0 10px;
+      text-align: center;
+      border: 2px solid gray
+    }
+    .loginTable, .lazyTable {
+      border-collapse:separate; border-spacing:10px;
+      margin-left: 20px;
+    }
+    .loginTable td, .lazyTable td {
+      text-align: right;
+    }
+    .loginTable .date, .lazyTable .date {
+      text-align: left;
+    }
+    .loginTable .date select, .lazyTable .date input{
+      width: 174px
+    }
+
+    .header {
+      position: fixed;
+      width: 100%;
+      height: 80px;
+      border-top: 1px solid #EDF1F6;
+      border-bottom: 1px solid #EDF1F6;
+      background: #FDFDFE linear-gradient(to right,#FDFDFE,#F7FAFC);
+    }
+
+    .header .fundamental-wrapper {
+      position: absolute;
+      left: 32%;
+      width: 140px;
+      height: 100%;
+    }
+
+    .header .lazy-wrapper {
+      position: absolute;
+      left: 66%;
+      width: 140px;
+      height: 100%;
+    }
+    .header span {
+      display: inline-block;
+      font-size: 36px;
+      height: 80px;
+      text-align: center;
+      line-height: 80px;
+      cursor: pointer;
+    }
+
+    .notice {
+      width: 560px;
+      margin: 0 auto;
+    }
+    .notice p, .lazy-notice p {
+      font-size: 24px;
+      text-align:center;
+      color: red
+    }
+    .main {
+      width: 100%;
+      padding-top: 120px;
+    }
+  </style>
+  </head>
+<body>
+  <header class="header">
+    <div class="fundamental-wrapper">
+      <span class="fundamental">原始版</span>
+    </div>
+    <div class="lazy-wrapper">
+      <span class="lazy">懒人版</span>
+    </div>
+  </header>
+  <div class="main">
+    <div class="notice"><p>
+      原始版只支持单月份导出,如想一次性导出多月数据,请点击懒人版按钮进入懒人版导出界面
+    </p></div>
+    <div class="lazy-notice">
+      <p style="font-size: 28px;">
+        懒人版支持最多3个月导出.
+      </p>
+    </div>
+    <form action="/login" method="post" class="loginForm">
+      <table class="loginTable" style="margin-left: 28px;">
+        <tr>
+          <td><label for="username">账号：</label></td>
+          <td><input type="text" name="username" id="username"></input></td>
+        </tr>
+        <tr>
+          <td><label for="password">密码：</label></td>
+          <td><input type="password" name="password" id="password"></input></td>
+        </tr>
+        <tr >
+          <td><label for="year">年：</label></td>
+          <td class="date"><select id="year" name="year">
+            <option value="2018">2018</option>
+            <option value="2019">2019</option>
+            <option value="2019">2020</option>
+          </select></td>
+        </tr>  
+        <tr >
+          <td><label for="month">月：</label></td>
+          <td class="date"><select name="month">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+          </select></td>
+        </tr>
+        <tr>
+          <td colspan="2" style="text-align: center"><input type="submit" id="export" value="导出"></td>
+          <td ></td>
+        </tr>
+      </table>  
+    </form> 
+  </div>
+  
+  <form action="/lazy" method="post" class="lazyForm">
+    <table class="lazyTable">
+      <tr>
+        <td><label for="username">账号：</label></td>
+        <td><input type="text" name="username" id="username"></input></td>
+      </tr>
+      <tr>
+        <td><label for="password">密码：</label></td>
+        <td><input type="password" name="password" id="password"></input></td>
+      </tr>
+      <tr >
+        <td><label for="startDate">起始日期：</label></td>
+        <td class="date"><input size="16" type="text" readonly class="startDate" id="startDate" name="startDate"></td>
+      </tr>  
+      <tr >
+        <td><label for="endDate">结束日期：</label></td>
+        <td class="date"><input size="16" type="text" readonly class="endDate" id="endDate" name="endDate"></td>
+      </tr>
+      <tr>
+        <td colspan="2" style="text-align: center"><input type="submit" id="export" value="导出"></td>
+        <td ></td>
+      </tr>
+    </table>  
+  </form>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/bootstrap-datetimepicker.js" ></script>
+  <script src="/js/bootstrap-datetimepicker.zh-CN.js"></script>
+  <script>
+    (function(){
+      $('.lazyForm').hide();
+      $('.lazy-notice').hide();
+    })();
+    let config = {
+      language: 'zh-CN',//显示中文
+      format: 'yyyy-mm-dd',//显示格式
+      minView: "month",//设置只显示到月份
+      initialDate: new Date(),//初始化当前日期
+      autoclose: true,//选中自动关闭
+      todayBtn: true//显示今日按钮
+    }
+    $('.startDate, .endDate').datetimepicker(config);
+
+    $('.fundamental').click(function(event) {
+      $('.loginForm').show();
+      $('.lazyForm').hide();
+      $('.lazy-notice').hide();
+      $('.notice').show();
+    });
+
+    $('.lazy').click(function(e) {
+      $('.loginForm').hide();
+      $('.notice').hide();
+      $('.lazyForm').show();
+      $('.lazy-notice').show();
+    });
+  </script>
+  </body>
+</html>
